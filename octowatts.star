@@ -107,7 +107,7 @@ def main(config):
         return render_content("pie", None, None, demand_text, trend, trend_color, color, weights, None, None, None)
 
 def basic_random():
-    seed = str(time.now())[0:27].replace(":", "").replace(".", "").replace("-", "").replace(" ", "")
+    seed = str(time.now())[0:27].replace(":", "").replace(".", "").replace("-", "").replace(" ", "").replace("+", "")
     seed = int(seed)
     return (seed * 48271) % 2147483647
 
