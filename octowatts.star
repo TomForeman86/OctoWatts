@@ -1,7 +1,7 @@
 """
 Applet: OctoWatts
 Summary: Live Energy Monitor
-Description: Octopus Energy live consumption and production monitor with one minute energy trend. Requires an Octopus Home Mini device.
+Description: Octopus Energy live consumption monitor, diplays your current usage and one minute energy trend. Requires an Octopus Home Mini device.
 Author: TomForeman86
 """
 
@@ -22,7 +22,7 @@ RANGE_MIN = -2000
 RANGE_MAX = 2000
 CHART_TYPE = "pie"
 
-DEMO_MODE = True
+DEMO_MODE = False
 
 COLOR_SCALE_POS = ["#FFFB5E", "#FCE013", "#FCB913", "#FD3900", "#D01A0F", "#7C0A01"]
 COLOR_SCALE_NEG = ["#b7ffbf", "#95f985", "#4ded30", "#26d701", "#00c301", "#00ab08"]
