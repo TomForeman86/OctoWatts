@@ -30,7 +30,6 @@ COLOR_SCALE_NEG = ["#b7ffbf", "#95f985", "#4ded30", "#26d701", "#00c301", "#00ab
 ICON = base64.decode("""iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAACoUExURQAAAP2sMf6sM/6sMv2qNv2sMv+rM/2qOPmsMv+sMv2sNf2tNP2tM/2tMf2tMvmtM/2sM/6tNv2tMv6sMv6sMv6sM/+sMv+sMv6sMv6sMv+sMv+sMv+sMv6sMf+sMv+sMv6sM/2sNf6sNP6sM/uuNf6sMv+sMv+sMv+sMv+sMv+sMv6tMv2tMv6sMvyuMP2tMf6sMv2sMv6sMv+sMv6sMv6sMv+sMv///xmJN0wAAAA2dFJOUwAAAAAAAAAAAAAAAAAAAAAAAAqHWhGUxxseqvxpLsDPIgsNAwFF1+jFyKIcHKIBAw0LLqsRCh/vcn8AAAABYktHRDcwuLhHAAAAB3RJTUUH6AoNCiAYBWbKEQAAAGlJREFUCNcFwQcCgkAMBMDlImikqSBdDlS6Hcj/n+YMAEOpUxDSBjAtdY7ihLYwd5RmecF7Gw5fStFVfb3h3rQiXT+MEx7Poe9E2uaF9+dbaSl/7ML1uMjnlP0DjpTE0cKWBxCFwUpsAH/dWwkrzmInGQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNC0xMC0xM1QxMDozMjoxNCswMDowMKPJwsIAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjQtMTAtMTNUMTA6MzI6MTQrMDA6MDDSlHp+AAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDI0LTEwLTEzVDEwOjMyOjI0KzAwOjAwCw5cQgAAAABJRU5ErkJggg==""")
 
 def main(config):
-
     APIKEY = config.str("API_KEY", API_KEY)
     DEVICEID = config.str("DEVICE_ID", DEVICE_ID)
     CHARTTYPE = config.str("CHART_TYPE", CHART_TYPE)
@@ -64,7 +63,8 @@ def main(config):
         telemetry, error = fetch_telemetry(access_token, DEVICEID, 10)
         if not telemetry and error:
             return render_content("error", None, None, "SETUP", "!", "#7C0A01", None, "API ERROR", error, "Incorrect DEVICE ID in config", " ")
-        # Handle API Faults
+            # Handle API Faults
+
         elif not telemetry:
             return render_content("error", None, None, "ERROR", "!", "#7C0A01", None, "API ERROR", error, "Octopus API System error, try later", " ")
 
@@ -74,7 +74,7 @@ def main(config):
         # Generate a random data for DEMO_MODE
 
         demand_value = random_in_range(1, RANGEMAX)
-        demand_average = int(float(demand_value / random_in_range(1, 100) *10))
+        demand_average = int(float(demand_value / random_in_range(1, 100) * 10))
 
         if demand_value % 2 == 0:
             demand_value = -abs(demand_value)
@@ -86,7 +86,6 @@ def main(config):
     # Calculate percentages
     percentage = calculate_percentage(demand_value, RANGEMIN, RANGEMAX)
     trend_percentage = calculate_trend_percentage(demand_value, demand_average)
-
 
     # Draw trend arrow and usage text
     trend = draw_arrow(demand_value, demand_average)
@@ -109,7 +108,7 @@ def main(config):
 
 def basic_random():
     seed = str(time.now())[0:27].replace(":", "").replace(".", "").replace("-", "").replace(" ", "")
-    seed =int(seed)
+    seed = int(seed)
     return (seed * 48271) % 2147483647
 
 def random_in_range(min_val, max_val):
@@ -121,13 +120,11 @@ def random_in_range(min_val, max_val):
     return min_val + (rand_value % range_size)
 
 def process_telemetry(telemetry):
-
     # Extract the latest demand value and compare with the previous one
     latest_telemetry = telemetry[-1]
 
     # Check if there are at least 6 telemetry entries
     if len(telemetry) >= 7:
-
         # Extract previous telemetry data from -6 to -2 (for the last minute)
         previous_telemetries = telemetry[-7:-1]  # Get entries from -6 to -2 (non-inclusive of -2)
         print(previous_telemetries)
@@ -153,7 +150,6 @@ def process_telemetry(telemetry):
     return demand_value, demand_average
 
 def fetch_telemetry(access_token, device_id, ttl):
-
     # Check cache so we don't make requests more than every 10 seconds
     cached_telemetry = cache.get("telemetry".format(device_id))
     if cached_telemetry:
@@ -179,7 +175,7 @@ def fetch_telemetry(access_token, device_id, ttl):
         demand
       }
     }
-    """ % (device_id, time_range['start'], time_range['end'])
+    """ % (device_id, time_range["start"], time_range["end"])
 
     headers = {
         "Content-Type": "application/json",
@@ -196,22 +192,21 @@ def fetch_telemetry(access_token, device_id, ttl):
         cache.set("telemetry".format(device_id), json.encode(telemetry), ttl_seconds = 10)
         return telemetry, None
 
-def calculate_time_range(current_time):
+    return None, "No telemetry data found"
 
+def calculate_time_range(current_time):
     one_minute = time.parse_duration("1m")
     return {
-        'start': (current_time - one_minute).format("2006-01-02T15:04Z07:00"),
-        'end': (current_time + one_minute).format("2006-01-02T15:04Z07:00"),
+        "start": (current_time - one_minute).format("2006-01-02T15:04Z07:00"),
+        "end": (current_time + one_minute).format("2006-01-02T15:04Z07:00"),
     }
 
 def round_to_nearest_ten(value):
-
     return int(((value + 5) // 10) * 10)
 
 def post_graphql_request(query, headers, ttl_seconds):
-
     payload = json.encode({"query": query})
-    response = http.post(url=GRAPHQL_URL, body=payload, headers=headers, ttl_seconds=ttl_seconds)
+    response = http.post(url = GRAPHQL_URL, body = payload, headers = headers, ttl_seconds = ttl_seconds)
     parsed_data = response.json()
 
     errors = parsed_data.get("errors", [])
@@ -225,7 +220,6 @@ def post_graphql_request(query, headers, ttl_seconds):
     return parsed_data, None
 
 def obtain_access_token(api_key):
-
     cache_key = "auth_token_" + api_key
     cached_token = cache.get(cache_key)
     if cached_token:
@@ -248,12 +242,11 @@ def obtain_access_token(api_key):
         return None, "Error obtaining token: " + error_message
 
     token = response_data["data"]["obtainKrakenToken"]["token"]
-    cache.set(cache_key, json.encode(token), ttl_seconds=1500)
+    cache.set(cache_key, json.encode(token), ttl_seconds = 1500)
 
     return token, None
 
 def calculate_percentage(demand_value, range_min, range_max):
-
     range_diff = range_max if demand_value >= 0 else range_min
     percentage = (demand_value / range_diff) * 100 if range_diff != 0 else 0
 
@@ -269,7 +262,6 @@ def calculate_percentage(demand_value, range_min, range_max):
     return percentage
 
 def generate_weights(percentage):
-
     if percentage <= -1:
         percentage = abs(percentage)
     weight = int(1.7 * percentage)
@@ -292,7 +284,6 @@ def generate_weights(percentage):
     return weights
 
 def get_color(percentage):
-
     color_scale = COLOR_SCALE_POS if percentage > 0 else COLOR_SCALE_NEG
 
     index = min(max(0, abs(percentage) // 10 - 1), len(color_scale) - 1)
@@ -300,94 +291,95 @@ def get_color(percentage):
     return color
 
 def format_demand_text(demand_value):
-
     demand_text = "{}w".format(demand_value)
     return demand_text.replace(" w", "w")
 
 def draw_arrow(demand_value, demand_prev_value):
-
     demand_value, demand_prev_value = float(demand_value), float(demand_prev_value)
     return "↑" if demand_value > demand_prev_value else "↓" if demand_value < demand_prev_value else "→"
 
-def render_content(chart, pixels, pixels_border, demand_text, trend, trend_color, color, weights=None, title=None, error=None, message=None):
+def render_content(chart, pixels, pixels_border, demand_text, trend, trend_color, color, weights = None, title = None, error = None, message = None):
     common_row = render.Row(
-        main_align="space_between",
-        children=[
-            render.Box(width=12, height=10, child=render.Image(src=ICON)),
-            render.Box(width=42, height=10, child=render.Text(content=demand_text, font="6x13")),
-            render.Box(width=12, height=10, child=render.Text(content=trend, color=trend_color, font="6x13")),
-        ]
+        main_align = "space_between",
+        children = [
+            render.Box(width = 12, height = 10, child = render.Image(src = ICON)),
+            render.Box(width = 42, height = 10, child = render.Text(content = demand_text, font = "6x13")),
+            render.Box(width = 12, height = 10, child = render.Text(content = trend, color = trend_color, font = "6x13")),
+        ],
     )
 
     if chart == "bar_horizontal":
         chart_body = render.Padding(
-            pad=(-1, 1, 0, 0),
-            child=render.Column(
-                cross_align="left",
-                children=[
-                    render.Box(color="#5C5C5C", width=pixels, height=19,
-                               child=render.Box(width=pixels_border, height=17, color=color)),
+            pad = (-1, 1, 0, 0),
+            child = render.Column(
+                cross_align = "left",
+                children = [
+                    render.Box(
+                        color = "#5C5C5C",
+                        width = pixels,
+                        height = 19,
+                        child = render.Box(width = pixels_border, height = 17, color = color),
+                    ),
                 ],
             ),
         )
     elif chart == "bar_vertical":
         chart_body = render.Row(
-            main_align="center",
-            children=[
+            main_align = "center",
+            children = [
                 render.Stack(
-                    children=[
-                        render.Box(color=color, width=64, height=19),
-                        render.Box(color="#5C5C5C", width=64, height=pixels_border),
-                        render.Box(color="#000000", width=64, height=pixels),
-                    ]
+                    children = [
+                        render.Box(color = color, width = 64, height = 19),
+                        render.Box(color = "#5C5C5C", width = 64, height = pixels_border),
+                        render.Box(color = "#000000", width = 64, height = pixels),
+                    ],
                 ),
-            ]
+            ],
         )
     elif chart == "error":
-        chart_body =  render.Column(
-            main_align="center",
-            children=[
-                render.Marquee(width=64, child=render.Text(title, color="#fa0", font="tom-thumb")),
-                render.Marquee(width=64, child=render.Text(error, color="#fa0", font="tom-thumb")),
-                render.Marquee(width=64, child=render.Text(message, color="#D2D2D2", font="tom-thumb")),
-            ]
+        chart_body = render.Column(
+            main_align = "center",
+            children = [
+                render.Marquee(width = 64, child = render.Text(title, color = "#fa0", font = "tom-thumb")),
+                render.Marquee(width = 64, child = render.Text(error, color = "#fa0", font = "tom-thumb")),
+                render.Marquee(width = 64, child = render.Text(message, color = "#D2D2D2", font = "tom-thumb")),
+            ],
         )
     else:  # Pie chart case
         chart_body = render.Row(
-            main_align="space_around",
-            expanded=True,
-            children=[
+            main_align = "space_around",
+            expanded = True,
+            children = [
                 render.Stack(
-                    children=[
-                        render.Circle(color="#333333", diameter=40),
+                    children = [
+                        render.Circle(color = "#333333", diameter = 40),
                         render.Padding(
-                            pad=(1, 0, 0, 0),
-                            child=render.PieChart(
-                                colors=["#000000", color, "#000000", "#333333", color],
-                                weights=weights,
-                                diameter=38,
+                            pad = (1, 0, 0, 0),
+                            child = render.PieChart(
+                                colors = ["#000000", color, "#000000", "#333333", color],
+                                weights = weights,
+                                diameter = 38,
                             ),
                         ),
-                    ]
+                    ],
                 ),
-            ]
+            ],
         )
 
     return render.Root(
-        delay=100,
-        child=render.Column(
-            expanded=True,
-            children=[
-                render.Box(height=1),
+        delay = 100,
+        child = render.Column(
+            expanded = True,
+            children = [
+                render.Box(height = 1),
                 common_row,
-                render.Box(height=2),
+                render.Box(height = 2),
                 chart_body,
             ],
         ),
     )
 
 def calculate_pixels(chart, percentage, demand_value):
-
     # Handle negative demand value
     if demand_value <= -1:
         percentage = abs(percentage)
@@ -407,7 +399,6 @@ def calculate_pixels(chart, percentage, demand_value):
     return pixels, pixels_border
 
 def calculate_trend_percentage(demand_value, demand_prev_value):
-
     if demand_prev_value != 0:
         # Calculate percentage difference, rounding before dividing
         percentage_difference = ((int(float(demand_value)) - int(float(demand_prev_value))) * 100 +
@@ -484,6 +475,5 @@ def get_schema():
                 icon = "compress",
                 default = False,
             ),
-
         ],
     )
